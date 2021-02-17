@@ -38,15 +38,17 @@
 (defcustom org-desc-initial-alist nil
   "An alist whose the element is of the form (link-regex . initial-input)."
   :type '(alist :key-type string :value-type string)
-  :group 'org-desc-initial-alist
-  :package-version '(org-desc-initial-alist . "0.1"))
+  :group 'org-desc-initial
+  :package-version '(org-desc-initial . "0.1"))
 
 (defun org-desc-initial-insert (&optional link)
+"Insert an Org link at point with description initial input."
   (interactive)
   (let* ((link (or link (read-string "Link: ")))
 	 (desc-initial (cdr (--first (string-match (car it) link)
 				     org-desc-initial-alist)))
 	 (desc (read-string "Description: " desc-initial)))
     (insert (org-link-make-string link desc))))
+
 (provide 'org-desc-initial)
 ;;; org-desc-initial.el ends here
