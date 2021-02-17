@@ -1,10 +1,10 @@
 * org-desc-initial
 
-This package provides a mean to insert an Org link whose the description
-prompt's initial input depends on the link.
+This package provides a handy way to supply Org link description. It is done by
+setting regex-based rules to supply initial input to the description prompt.
 
 ** Installation
-The following configuration relies on [[https://github.com/quelpa/quelpa-use-package][quelpa-use-package]], but it is
+The following installation relies on [[https://github.com/quelpa/quelpa-use-package][quelpa-use-package]], but it is
 straightforward to clone this repo locally and use =use-package= instead.
 
 #+begin_src emacs-lisp
@@ -12,20 +12,45 @@ straightforward to clone this repo locally and use =use-package= instead.
   :ensure t
   :quelpa (org-desc-initial :fetcher github :repo "firmart/org-desc-initial")
   :config
-  ;; Alist of form (link-regex . initial-input)
-  (setq org-desc-initial-alist
-	'(("https://en.wikipedia\\.org.*" . "Wikipedia: ")
-	  ("file:.*" . "FILE: ")
-	  ("pdf:.*" . "PDF: "))))
+  ;; See below
+)
 #+end_src
 
-** Functions
+** Configuration
 
-- =org-desc-initial-insert (&optional link)=
+The configuration of this package depends on the associated list
+=org-desc-initial-alist= whose the element is of the form =(link-regex
+. initial-input)=.
+- =LINK-REGEX= is a regex which is intended to match an Org link. It can contain
+  group =\\(...\\)=.
+- =INITIAL-INPUT= is either a string or a function. If it is a string, the
+  initial input will be simply the string. On the other hand, if it is a
+  function, it should take =LINK=, =REGEX= and =REGION= as arguments.
+  - =LINK= is the supplied Org link. 
+  - =REGEX= is the regex which matched =LINK=.
+  - =REGION= is the string of the current region, =nil= otherwise.
+
+#+begin_src emacs-lisp 
+(setq org-desc-initial-alist
+      '(("https://en.wikipedia\\.org.*" . "Wikipedia: ")
+	("https://www.emacswiki.org/emacs/\\(.*\\)" . my/org-desc-emacs-wiki)
+	("file:.*" . "FILE: ")
+	("pdf:.*" . "PDF: ")))
+
+  (defun my/org-desc-emacs-wiki (link regex region)
+    (string-match regex link)
+    (concat "Emacs Wiki: "
+	    (or region (match-string 1 link))))
+#+end_src
+
+You can try the result by calling =org-desc-initial-insert=.
+   
+** Function(s)
+
+- =org-desc-initial-insert (&optional link)=: insert at point an Org link
+  
 
 ** Todo
 - With C-u, get link from kill-ring.
-- Dash => cl-lib.
-- Allow replacement \1 \2 and function as cdr of the alist.
 - Allow default initial input =(t . "")=
-- Consider =org-region-acitve-p=
+- GIF.
