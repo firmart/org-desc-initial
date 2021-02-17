@@ -1,0 +1,19 @@
+* org-desc-initial
+
+#+begin_src emacs-lisp
+(use-package org-desc-initial
+  :pin manual
+  :load-path "lisp/org-desc-initial"
+  :config
+  (setq org-desc-initial-alist
+	'(("https://en.wikipedia\\.org.*" . "Wikipedia: ")
+	  ("file:.*" . "FILE: ")
+	  ("pdf:.*" . "PDF: "))))
+#+end_src
+
+
+** Todo
+- with C-u, get link from kill-ring
+- dash => cl-lib
+- allow replacement \1 \2 etc.
+- allow default initial input
