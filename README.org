@@ -4,12 +4,13 @@ This package provides a mean to insert an Org link whose the description
 prompt's initial input depends on the link.
 
 ** Installation
-
+The following configuration relies on [[https://github.com/quelpa/quelpa-use-package][quelpa-use-package]], but it is
+straightforward to clone this repo locally and use =use-package= instead.
 
 #+begin_src emacs-lisp
 (use-package org-desc-initial
-  :pin manual
-  :load-path "lisp/org-desc-initial"
+  :ensure t
+  :quelpa (org-desc-initial :fetcher github :repo "firmart/org-desc-initial")
   :config
   (setq org-desc-initial-alist
 	'(("https://en.wikipedia\\.org.*" . "Wikipedia: ")
