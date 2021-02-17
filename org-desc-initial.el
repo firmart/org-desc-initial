@@ -7,7 +7,7 @@
 ;; Version: 0.1
 ;; Keywords: convenience, notification
 ;; URL: https://www.github.com/firmart/notmuch-notify
-;; Package-Requires: (org . "9.3") (dash . "2.0")
+;; Package-Requires: (org . "9.3") cl-lib
 
 
 ;; This program is free software: you can redistribute it and/or
@@ -24,7 +24,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (require 'org)
-(require 'dash)
+(require 'cl-lib)
 
 ;;; Commentary:
 ;;
@@ -37,17 +37,31 @@
 
 (defcustom org-desc-initial-alist nil
   "An alist whose the element is of the form (link-regex . initial-input)."
-  :type '(alist :key-type string :value-type string)
+  :type '(alist :key-type string :value-type (choice string function))
   :group 'org-desc-initial
   :package-version '(org-desc-initial . "0.1"))
 
+(defun org-desc-initial--first-match (link)
+  (cl-loop for a in org-desc-initial-alist
+	   for r = (car a)
+	   when (string-match r link)
+	   return a))
+
 (defun org-desc-initial-insert (&optional link)
-"Insert an Org link at point with description initial input."
+  "Insert an Org link at point with description initial input."
   (interactive)
   (let* ((link (or link (read-string "Link: ")))
-	 (desc-initial (cdr (--first (string-match (car it) link)
-				     org-desc-initial-alist)))
+	 (region (when (region-active-p)
+		   (buffer-substring-no-properties (region-beginning) (region-end))))
+	 (remove (and region (list (region-beginning) (region-end))))
+	 (match (org-desc-initial--first-match link))
+	 (regex (car match))
+	 (match-value (cdr match))
+	 (desc-initial (cond
+			((stringp match-value) (concat match-value region))
+			((functionp match-value) (funcall match-value link regex region))))
 	 (desc (read-string "Description: " desc-initial)))
+    (when remove (apply #'delete-region remove))
     (insert (org-link-make-string link desc))))
 
 (provide 'org-desc-initial)
