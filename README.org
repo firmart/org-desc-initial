@@ -32,7 +32,7 @@ The configuration of this package depends on the associated list
 
 #+begin_src emacs-lisp 
 (setq org-desc-initial-alist
-      '(("https://en.wikipedia\\.org.*" . "Wikipedia: ")
+      '(("https://en.wikipedia\\.org.*" . my/org-desc-en-wiki)
 	("https://www.emacswiki.org/emacs/\\(.*\\)" . my/org-desc-emacs-wiki)
 	("file:.*" . "FILE: ")
 	("pdf:.*" . "PDF: ")))
@@ -41,9 +41,18 @@ The configuration of this package depends on the associated list
     (string-match regex link)
     (concat "Emacs Wiki: "
 	    (or region (match-string 1 link))))
+
+(defun my/org-desc-en-wiki (link regex region)
+    (string-match regex link)
+    (concat "Wikipedia: "
+	    (or region (replace-regexp-in-string "_" " "
+						 (match-string 1 link)))))
 #+end_src
 
 You can try the result by calling =org-desc-initial-insert=.
+With the above configuration, the initial input of the following links are
+- =https://en.wikipedia.org/wiki/Johann_Sebastian_Bach= => =Wikipedia: Johann Sebastian Bach=
+- =https://www.emacswiki.org/emacs/PatternMatching= => =Emacs Wiki: PatternMatching=
    
 ** Function(s)
 
@@ -52,5 +61,5 @@ You can try the result by calling =org-desc-initial-insert=.
 
 ** Todo
 - With C-u, get link from kill-ring.
-- Allow default initial input =(t . "")=
+- README:Tips: default initial input =(".*" . "")=
 - GIF.
