@@ -1,5 +1,11 @@
 * org-desc-initial
 
+This package provides a mean to insert an Org link whose the description
+prompt's initial input depends on the link.
+
+** Installation
+
+
 #+begin_src emacs-lisp
 (use-package org-desc-initial
   :pin manual
@@ -11,9 +17,13 @@
 	  ("pdf:.*" . "PDF: "))))
 #+end_src
 
+** Functions
+
+- =org-desc-initial-insert (&optional link)=
 
 ** Todo
-- with C-u, get link from kill-ring
-- dash => cl-lib
-- allow replacement \1 \2 etc.
-- allow default initial input
+- With C-u, get link from kill-ring.
+- Dash => cl-lib.
+- Allow replacement \1 \2 and function as cdr of the alist.
+- Allow default initial input =(t . "")=
+- Consider =org-region-acitve-p=
