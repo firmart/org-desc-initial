@@ -60,6 +60,5 @@ With the above configuration, the initial input of the following links are
   
 
 ** Todo
-- With C-u, get link from kill-ring.
 - README:Tips: default initial input =(".*" . "")=
 - GIF.

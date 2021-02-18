@@ -48,9 +48,9 @@
 	   return a))
 
 (defun org-desc-initial-insert (&optional link)
-  "Insert an Org link at point with description initial input."
-  (interactive)
-  (let* ((link (or link (read-string "Link: ")))
+  "Insert an Org LINK at point with prefilled description initial input."
+  (interactive (list (when current-prefix-arg (car kill-ring))))
+  (let* ((link (substring-no-properties (or link (read-string "Link: "))))
 	 (region (when (region-active-p)
 		   (buffer-substring-no-properties (region-beginning) (region-end))))
 	 (remove (and region (list (region-beginning) (region-end))))
