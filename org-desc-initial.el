@@ -47,9 +47,21 @@
 	   when (string-match r link)
 	   return a))
 
+;; Inspired from https://emacs.stackexchange.com/a/819/23697
+(defun org-desc--entry-from-clipboard ()
+  (cond ((and (display-graphic-p) x-select-enable-clipboard)
+	 (x-selection 'CLIPBOARD))
+	(t (apply #'process-lines
+		  (cond
+		   ((eq system-type 'cygwin) '("getclip"))
+		   ((eq system-type 'darwin) '("pbpaste"))
+		   ((or (eq system-type 'gnu/linux)
+			(eq system-type 'linux))
+		    '("xsel" "-ob")))))))
+
 (defun org-desc-initial-insert (&optional link)
   "Insert an Org LINK at point with prefilled description initial input."
-  (interactive (list (when current-prefix-arg (car kill-ring))))
+  (interactive (list (when current-prefix-arg (org-desc--entry-from-clipboard))))
   (let* ((link (substring-no-properties (or link (read-string "Link: "))))
 	 (region (when (region-active-p)
 		   (buffer-substring-no-properties (region-beginning) (region-end))))
